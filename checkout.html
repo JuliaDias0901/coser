@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Coser Clau Dias</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .checkout-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .payment-methods {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--secondary-color);
+        }
+        .payment-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .payment-option input {
+            margin-right: 15px;
+        }
+    </style>
+      <link rel="stylesheet" href="style.css">
+      <link rel="icon"
+    type="image/png"
+    href="assets/img/Casinha Coser.png"
+>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="assets/img/Casinha Coser.png" alt="Casinha Coser" class="logo-casinha">
+            <img src="assets/img/Coser marrom.png" alt="Coser Clau Dias" class="logo-escrita">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="catalogo.html">Catálogo</a></li>
+                <li><a href="sobre.html">Sobre</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="section-title">Seu Carrinho</h1>
+        <div class="checkout-container">
+            <div id="cart-items-list">
+                <!-- Itens do carrinho serão inseridos aqui -->
+            </div>
+            
+            <div id="cart-total" style="text-align: right; margin-top: 2rem; font-size: 1.5rem; font-weight: bold; color: var(--primary-color);">
+                Total: R$ 0,00
+            </div>
+
+            <div class="payment-methods">
+                <h3>Forma de Pagamento</h3>
+                <div class="payment-option">
+                    <input type="radio" name="payment" id="pix" checked>
+                    <label for="pix"><i class="fas fa-qrcode"></i> PIX (5% de desconto)</label>
+                </div>
+                <div class="payment-option">
+                    <input type="radio" name="payment" id="card">
+                    <label for="card"><i class="fas fa-credit-card"></i> Cartão de Crédito</label>
+                </div>
+                
+                <button id="finish-order" class="btn" style="width: 100%; margin-top: 2rem; border: none; cursor: pointer; font-size: 1.2rem;">Finalizar Pedido</button>
+            </div>
+        </div>
+    </main>
+
+ <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const cartList =
+        document.getElementById('cart-items-list');
+
+    const totalDisplay =
+        document.getElementById('cart-total');
+
+    let cart = JSON.parse(
+
+        localStorage.getItem('coser_cart')
+
+    ) || [];
+
+    // =========================
+    // RENDERIZAR CARRINHO
+    // =========================
+
+    function renderCart() {
+
+        if (cart.length === 0) {
+
+            cartList.innerHTML = `
+
+                <p style="text-align:center;">
+
+                    Seu carrinho está vazio.
+
+                </p>
+
+            `;
+
+            totalDisplay.innerText =
+                'Total: R$ 0,00';
+
+            return;
+
+        }
+
+        cartList.innerHTML = '';
+
+        let total = 0;
+
+        cart.forEach((item, index) => {
+
+            const preco =
+                parseFloat(item.preco);
+
+            total += preco;
+
+            const div =
+                document.createElement('div');
+
+            div.className =
+                'cart-item';
+
+            div.innerHTML = `
+
+                <div>
+
+                    <strong>
+
+                        ${item.nome}
+
+                    </strong>
+
+                    <br>
+
+                    <small>
+
+                        Nome do bebê:
+                        ${item.babyName}
+
+                    </small>
+
+                </div>
+
+                <div>
+
+                    <span>
+
+                        R$
+                        ${preco
+                            .toFixed(2)
+                            .replace('.', ',')}
+
+                    </span>
+
+                    <button
+
+                        onclick="removeItem(${index})"
+
+                        style="
+                        margin-left:15px;
+                        color:red;
+                        border:none;
+                        background:none;
+                        cursor:pointer;
+                        "
+
+                    >
+
+                        <i class="fas fa-trash"></i>
+
+                    </button>
+
+                </div>
+
+            `;
+
+            cartList.appendChild(div);
+
+        });
+
+        totalDisplay.innerText =
+
+            `Total: R$ ${total
+                .toFixed(2)
+                .replace('.', ',')}`;
+
+    }
+
+    // =========================
+    // REMOVER ITEM
+    // =========================
+
+    window.removeItem = (index) => {
+
+        cart.splice(index, 1);
+
+        localStorage.setItem(
+
+            'coser_cart',
+
+            JSON.stringify(cart)
+
+        );
+
+        renderCart();
+
+    };
+
+    // =========================
+    // FINALIZAR PEDIDO
+    // =========================
+
+    document.getElementById(
+        'finish-order'
+    )
+
+    .addEventListener('click', () => {
+
+        if (cart.length === 0) {
+
+            alert(
+                'Seu carrinho está vazio!'
+            );
+
+            return;
+
+        }
+
+        const nome = prompt(
+            'Informe seu nome completo:'
+        );
+
+        const whatsapp = prompt(
+            'Informe seu WhatsApp:'
+        );
+
+        const email = prompt(
+            'Informe seu e-mail:'
+        );
+
+        if (!nome || !whatsapp) {
+
+            alert(
+                'Nome e WhatsApp são obrigatórios.'
+            );
+
+            return;
+
+        }
+
+        // =========================
+        // FORMA DE PAGAMENTO
+        // =========================
+
+        const formaPagamento =
+
+            document.getElementById('pix').checked
+
+            ? 'Pix'
+
+            : 'Cartão';
+
+        // =========================
+        // TOTAL
+        // =========================
+
+        const total = cart.reduce(
+
+            (sum, item) =>
+
+                sum + parseFloat(item.preco),
+
+            0
+
+        );
+
+        // =========================
+        // DADOS PEDIDO
+        // =========================
+
+        const pedidoData = {
+
+            nome: nome,
+
+            whatsapp: whatsapp,
+
+            email: email,
+
+            total: total,
+
+            forma_pagamento:
+                formaPagamento,
+
+            itens: cart.map(item => ({
+
+                id: item.id,
+
+                nome: item.nome,
+
+                babyName:
+                    item.babyName,
+
+                preco:
+                    parseFloat(item.preco)
+
+            }))
+
+        };
+
+        // =========================
+        // ENVIAR PEDIDO
+        // =========================
+
+        fetch('finalizar_pedido.php', {
+
+            method: 'POST',
+
+            headers: {
+
+                'Content-Type':
+                    'application/json'
+
+            },
+
+            body: JSON.stringify(
+                pedidoData
+            )
+
+        })
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (data.success) {
+
+                alert(
+
+                    'Pedido #' +
+
+                    data.id +
+
+                    ' realizado com sucesso! 💖'
+
+                );
+
+                localStorage.removeItem(
+                    'coser_cart'
+                );
+
+                window.location.href =
+                    'index.html';
+
+            } else {
+
+                alert(
+
+                    'Erro: ' +
+
+                    data.error
+
+                );
+
+            }
+
+        })
+
+        .catch(error => {
+
+            console.error(error);
+
+            alert(
+                'Erro ao finalizar pedido.'
+            );
+
+        });
+
+    });
+
+    renderCart();
+
+});
+
+</script>
+</body>
+</html>
