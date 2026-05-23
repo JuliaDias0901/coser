@@ -1,11 +1,17 @@
 <?php
+include 'proteger.php';
 include '../db.php';
 
-$id = $_GET['id'];
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
-$sql = "DELETE FROM produtos WHERE id = $id";
+if (!$id) {
+    header('Location: index.php');
+    exit;
+}
 
-$conn->query($sql);
+$stmt = $conn->prepare("DELETE FROM produtos WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
 
 header('Location: index.php');
 exit;

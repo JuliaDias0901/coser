@@ -2,6 +2,10 @@
 include 'proteger.php';
 include '../db.php';
 
+function h($valor) {
+    return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
+}
+
 $sql = "SELECT * FROM mensagens ORDER BY id DESC";
 
 $result = $conn->query($sql);
@@ -158,15 +162,15 @@ textarea{
 <tr>
 
 <td>
-<?= $msg['nome'] ?>
+<?= h($msg['nome']) ?>
 </td>
 
 <td>
-<?= $msg['telefone'] ?>
+<?= h($msg['telefone']) ?>
 </td>
 
 <td>
-<?= $msg['mensagem'] ?>
+<?= nl2br(h($msg['mensagem'])) ?>
 </td>
 
 <td>
@@ -204,7 +208,7 @@ preg_replace('/[^0-9]/', '', $msg['telefone']) .
 ?>
 
 <a
-href="<?= $link ?>"
+href="<?= h($link) ?>"
 target="_blank"
 class="btn"
 >

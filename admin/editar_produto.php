@@ -1,13 +1,29 @@
 <?php
+include 'proteger.php';
 include '../db.php';
 
-$id = $_GET['id'];
+function h($valor) {
+    return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
+}
 
-$sql = "SELECT * FROM produtos WHERE id = $id";
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
-$result = $conn->query($sql);
+if (!$id) {
+    header('Location: index.php');
+    exit;
+}
 
+$stmt = $conn->prepare("SELECT * FROM produtos WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+
+$result = $stmt->get_result();
 $produto = $result->fetch_assoc();
+
+if (!$produto) {
+    header('Location: index.php');
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -96,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <input
             type="text"
             name="nome"
-            value="<?= $produto['nome'] ?>"
+            value="<?= h($produto['nome']) ?>"
             required
         >
 
@@ -104,14 +120,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             type="number"
             step="0.01"
             name="preco"
-            value="<?= $produto['preco'] ?>"
+            value="<?= h($produto['preco']) ?>"
             required
         >
 
         <input
             type="text"
             name="categoria"
-            value="<?= $produto['categoria'] ?>"
+            value="<?= h($produto['categoria']) ?>"
             required
         >
 

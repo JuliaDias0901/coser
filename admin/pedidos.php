@@ -2,6 +2,10 @@
 include 'proteger.php';
 include '../db.php';
 
+function h($valor) {
+    return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
+}
+
 $sql = "SELECT * FROM pedidos ORDER BY data_pedido DESC";
 
 $result = $conn->query($sql);
@@ -194,7 +198,7 @@ select{
 
 <td>
 
-<?= $pedido['id'] ?>
+<?= h($pedido['id']) ?>
 
 </td>
 
@@ -202,13 +206,13 @@ select{
 
 <strong>
 
-<?= $pedido['nome_cliente'] ?>
+<?= h($pedido['nome_cliente']) ?>
 
 </strong>
 
 <br><br>
 
-<?= $pedido['whatsapp'] ?>
+<?= h($pedido['whatsapp']) ?>
 
 </td>
 
@@ -216,10 +220,10 @@ select{
 
 <div class="produtos-box">
 
-<?= nl2br(
+<?= nl2br(h(
     $pedido['produtos']
     ?? 'Pedido antigo sem produtos salvos'
-) ?>
+)) ?>
 
 </div>
 
@@ -239,8 +243,8 @@ R$
 
 <td>
 
-<?= $pedido['forma_pagamento']
-?? 'Não informado' ?>
+<?= h($pedido['forma_pagamento']
+?? 'Não informado') ?>
 
 </td>
 
@@ -254,7 +258,7 @@ method="POST"
 <input
 type="hidden"
 name="id"
-value="<?= $pedido['id'] ?>"
+value="<?= h($pedido['id']) ?>"
 >
 
 <select
@@ -364,7 +368,7 @@ Coser Clau Dias 💛"
 class="btn whatsapp"
 target="_blank"
 
-href="https://wa.me/55<?= preg_replace('/[^0-9]/', '', $pedido['whatsapp']) ?>?text=<?= $msg ?>">
+href="https://wa.me/55<?= h(preg_replace('/[^0-9]/', '', $pedido['whatsapp'])) ?>?text=<?= h($msg) ?>">
 
 WhatsApp
 
@@ -375,7 +379,7 @@ WhatsApp
 <a
 class="btn delete"
 
-href="excluir_pedido.php?id=<?= $pedido['id'] ?>"
+href="excluir_pedido.php?id=<?= h($pedido['id']) ?>"
 
 onclick="return confirm('Deseja excluir este pedido?')">
 

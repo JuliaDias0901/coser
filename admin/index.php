@@ -2,6 +2,10 @@
 include 'proteger.php';
 include '../db.php';
 
+function h($valor) {
+    return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
+}
+
 $sql = "SELECT * FROM produtos ORDER BY id DESC";
 
 $result = $conn->query($sql);
@@ -155,25 +159,25 @@ $result = $conn->query($sql);
 
         <tr>
 
-            <td><?= $produto['id'] ?></td>
+            <td><?= h($produto['id']) ?></td>
 
-            <td><?= $produto['nome'] ?></td>
+            <td><?= h($produto['nome']) ?></td>
 
             <td>
                 R$ <?= number_format($produto['preco'], 2, ',', '.') ?>
             </td>
 
-            <td><?= $produto['categoria'] ?></td>
+            <td><?= h($produto['categoria']) ?></td>
 
             <td class="actions">
 
                 <a class="edit"
-                   href="editar_produto.php?id=<?= $produto['id'] ?>">
+                   href="editar_produto.php?id=<?= h($produto['id']) ?>">
                     Editar
                 </a>
 
                 <a class="delete"
-                   href="excluir_produto.php?id=<?= $produto['id'] ?>"
+                   href="excluir_produto.php?id=<?= h($produto['id']) ?>"
                    onclick="return confirm('Deseja excluir?')">
 
                     Excluir
